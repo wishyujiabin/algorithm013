@@ -1,0 +1,76 @@
+
+PriorityQueue的源码分析
+
+1.在PriorityQueue中初始化定义了5个变量,可以看到它的底层逻辑是用数组来实现的,默认的初始化大小是11
+	
+	private static final int DEFAULT_INITIAL_CAPACITY = 11;
+
+	private transient Object[] queue;
+
+	private int size = 0;
+
+	private final Comparator<? super E> comparator;
+
+	private transient int modCount = 0;
+
+2.PriorityQueue的构造函数
+
+	PriorityQueue的构造函数有以下几种,各个构造函数的作用如下:
+
+		1. PriorityQueue: 创建一个默认容器和自然顺序的优先级队列
+
+		2. PriorityQueue(int initialCapacity): 创建一个指定容量和自然顺序的优先级队列;
+
+		3. PriorityQueue(int initialCapacity, Comparator<? super E> comparator): 创建一个指定容量和指定比较器的优先级队列
+		
+		4. PriorityQueue(Collection<? extend E> c) : 创建一个包含指定集合元素的优先级队列;
+
+		5. PriorityQueue(PriorityQueue<? extend E> c) : 创建一个包含指定排序集合中元素的优先队列;
+
+3.PriorityQueue中add方法的实现
+
+	由于PriorityQueue类似一颗完全二叉树,但是它内部存储结构使用的是数组,并且是无界限的,因此在插入一个元素时,可能需要经过多个操作步骤: 
+	
+	public boolean add(E e) {
+		return offer(e);
+	}
+
+	public boolean offer(E e) {
+	        if (e == null)
+			throw new NullPointerException();
+		modCount++;
+		int i = size;
+
+	        if (i >= queue.length) {
+	            grow(i + 1);
+		    size = i + 1;
+			if (i == 0)
+		           queue[0] = e;
+			else
+				siftUp(i, e);
+			return true;
+		}
+		
+	}
+	
+
+	首先需要判断插入的元素是否是null, 因为在优先级队列中不允许存在空元素,这是因为在队列中是根据null来判断某个位置是否存在值
+	如果当前队列中的元素的个数大于或者等于存储数据的长度,那么需要对数组进行扩容.其调用的方法位grow(minCapacity),
+其扩容的逻辑是,如果当前数据的长度小于64,那么将扩大一半的长度,否则扩大一倍,同时需要对扩容后的数组的容量进行检查,不能查过最大的限制容量;
+
+
+	private void grow(int minCapacity) {
+	        int oldCapacity = queue.length;
+	        int newCapacity = oldCapacity + ((oldCapacity < 64) ?
+	                                         (oldCapacity + 2) :
+	                                         (oldCapacity >> 1));
+
+	        if (newCapacity - MAX_ARRAY_SIZE > 0)
+	            newCapacity = hugeCapacity(minCapacity);
+
+	        queue = Arrays.copyOf(queue, newCapacity);
+	}
+
+	如果当前队列为空,那么插入的是第一个元素,直接赋值到数组的第[0]个位置,结束操作
+	
+	如果当前队列不为空,默认则是将新插入的元素添加到数组的尾部,但是由于优先级队列要求记父节点与子节点之间的值有比较的关系,所以可能需要进行调整,主要是在siftUp方法中实现,更具有无比较器决定最终的实现方法,将插入的元素与其父节点元素比较,如果大于其父节点,那么完成插入操作,不需要调整,如果小于其父节点,那么需要与其父节点调换位置,然后再一层层的往上比较,使其满足优先级队列的特性.
