@@ -1,0 +1,55 @@
+解法 1: 
+
+class Solution {
+    private TreeNode answer;
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        dfs(root, p, q);
+        return answer;    
+    }
+
+    private boolean dfs(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return false;
+        boolean left_node = dfs(root.left, p, q);
+        boolean right_node = dfs(root.right, p, q);
+        if ((left_node == true && right_node == true) || ((root.val == p.val || root.val == q.val) && (left_node == true || right_node == true))) {
+            answer = root;
+        }
+        return left_node == true || (right_node == true || root.val == p.val || root.val == q.val);
+    }
+}
+
+解法 2:
+
+class Solution {
+    private Map<Integer, TreeNode> parent = new HashMap<Integer, TreeNode>();
+    private Set<Integer> visited = new HashSet<Integer>();
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        dfs(root);
+        while (p != null) {
+            visited.add(p.val);
+            p = parent.get(p.val);
+        }
+        while (q != null) {
+            if (visited.contains(q.val)) {
+                return q;
+            }
+            q = parent.get(q.val);
+        }
+        return null;
+    }
+
+    public void dfs(TreeNode root) {
+        if (root.left != null) {
+            parent.put(root.left.val, root);
+            dfs(root.left);
+        }
+
+        if (root.right != null) {
+            parent.put(root.right.val, root);
+            dfs(root.right);
+        }
+    }
+}
+

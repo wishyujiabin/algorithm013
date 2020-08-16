@@ -1,0 +1,29 @@
+½â·¨1 :
+
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> resource = new ArrayList();
+        List<Integer> output = new ArrayList<Integer>();
+        
+        for (int i = 0; i < nums.length; i++) {
+            output.add(nums[i]);
+        }
+
+        int length = nums.length;
+        swap_combination(resource, output, 0, length);
+        return resource;
+    }
+
+    private void swap_combination(List<List<Integer>> res, List<Integer> output, int start, int length) {
+        if (start == length) {
+            res.add(new ArrayList(output));
+            return;
+        }
+
+        for (int i = start; i < length; i++) {
+            Collections.swap(output, start, i);
+            swap_combination(res, output, start + 1, length);
+            Collections.swap(output, start, i);
+        }
+    }
+}

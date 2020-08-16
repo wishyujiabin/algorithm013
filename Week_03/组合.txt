@@ -1,0 +1,26 @@
+½â´ð1 :
+
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        Deque<Integer> queue = new ArrayDeque<Integer>();
+        List<List<Integer>> resource = new ArrayList();
+
+        backTrace(1, n, k, resource, queue);
+        return resource;   
+    }
+
+    private void backTrace(int first, int n, int k, List<List<Integer>> resource, Deque<Integer> queue) {
+        if (queue.size() == k) {
+            resource.add(new ArrayList(queue));
+            return;
+        }
+
+        for (int i = first; i < n + 1; i++) {
+            queue.addLast(i);
+
+            backTrace(i + 1, n, k, resource, queue);
+
+            queue.removeLast();
+        }
+    }
+}
