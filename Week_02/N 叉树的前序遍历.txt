@@ -1,0 +1,49 @@
+解法1 : 
+
+class Solution {
+    public List<Integer> preorder(Node root) {
+        Stack<Node> stack_node = new Stack<Node>();
+        List<Integer> res = new ArrayList<Integer>();
+        Node curr = null;
+        Node[] node_array = null;
+
+        if (root == null) {
+            return res;
+        }
+
+        stack_node.push(root);
+        while (!stack_node.empty()) {
+            curr = stack_node.pop();
+            res.add(curr.val);
+            if (curr.children != null) {
+                node_array = new Node[curr.children.size()];
+                curr.children.toArray(node_array);
+                for (int i = node_array.length - 1; i >= 0; i--) {
+                    stack_node.push(node_array[i]);
+                }
+            }
+        }
+        return res;
+    }
+}
+
+解法 2 : 
+
+class Solution {
+    public List<Integer> preorder(Node root) {
+        List<Integer> res = new ArrayList<Integer>();
+        preOrderTraversal(res, root);
+        return res;
+    }
+    
+    private void preOrderTraversal(List<Integer> res, Node root) {
+        if (root != null) {
+            res.add(root.val);
+            if (root.children != null) {
+                for (Node childer : root.children) {
+                    preOrderTraversal(res, childer);
+                }
+            }
+        }
+    }
+}
