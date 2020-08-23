@@ -1,0 +1,54 @@
+½â·¨1 :
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        int begin_length = beginWord.length();
+
+        String new_word = "";
+        Map<String, List<String>> all_combat_map = new HashMap<String, List<String>>();
+
+        for (String word : wordList) {
+            
+            for (int i = 0; i < begin_length; i++) {
+                new_word = word.substring(0, i) + "*" + word.substring(i + 1, begin_length);
+                List<String> all_word_list = all_combat_map.getOrDefault(new_word, new ArrayList<>());
+                all_word_list.add(word);
+                all_combat_map.put(new_word, all_word_list);
+            }
+        }
+
+        Queue<Pair<String, Integer>> bfs = new LinkedList<Pair<String, Integer>>();
+        Map<String, Boolean> visited = new HashMap<String, Boolean>();
+
+        visited.put(beginWord, true);
+        bfs.add(new Pair(beginWord, 1));
+
+        int level = 0;
+        while (!bfs.isEmpty()) {
+            Pair<String, Integer> node = bfs.remove();
+            new_word = node.getKey();
+            level = node.getValue();
+
+            for (int i = 0; i < begin_length; i++) {
+
+                String current_word = new_word.substring(0, i) + "*" + new_word.substring(i + 1, begin_length);
+
+                for (String adjacentWord : all_combat_map.getOrDefault(current_word, new ArrayList<String>())) {
+                    // found it
+                    if (adjacentWord.equals(endWord)) {
+                        return level + 1;
+                    }
+                    if (!visited.containsKey(adjacentWord)) {
+                        visited.put(adjacentWord, true);
+                        bfs.add(new Pair(adjacentWord, level + 1));
+                    }
+
+                }
+            }
+        }
+
+        return 0;
+
+    }
+
+    
+}

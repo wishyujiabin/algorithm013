@@ -1,0 +1,92 @@
+解法1 : 
+
+class Solution {
+    public int numIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+
+        int total_row = grid.length;
+        int total_col = grid[0].length;
+        int num_island = 0;
+
+        for (int i = 0; i < total_row; i++) {
+            for (int j = 0; j < total_col; j++) {
+                if (grid[i][j] == '1') {
+                    num_island++;
+                    dfs(grid, i, j);
+                }
+            }
+        }
+
+        return num_island;
+    }
+
+    private void dfs(char[][] grid, int row, int col) {
+        int total_row = grid.length;
+        int total_col = grid[0].length;
+
+        if (row < 0 || col < 0 || row >= total_row || col >= total_col || grid[row][col] == '0') return;
+
+        grid[row][col] = '0';
+        dfs(grid, row - 1, col);
+        dfs(grid, row + 1, col);
+        dfs(grid, row, col - 1);
+        dfs(grid, row, col + 1);
+    }
+}
+
+解法2 :
+
+class Solution {
+    public int numIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+
+        int total_row = grid.length;
+        int total_col = grid[0].length;
+        int num_island = 0;
+
+
+        int tmp_row = 0;
+        int tmp_col = 0;
+        int tmp_number = 0;
+
+        for (int i = 0; i < total_row; i++) {
+            for (int j = 0; j < total_col; j++) {
+                if (grid[i][j] == '1') {
+                    num_island++;
+                    grid[i][j] = '0';
+                    Queue<Integer> queue = new LinkedList<Integer>();
+                    queue.add(i * total_col + j);
+                    while (!queue.isEmpty()) {
+                        tmp_number = queue.remove();
+                        tmp_row = tmp_number / total_col;
+                        tmp_col = tmp_number % total_col;
+                        if ((tmp_row - 1 >= 0) && (grid[tmp_row - 1][tmp_col] == '1')) {
+                            grid[tmp_row - 1][tmp_col] = '0';
+                            queue.add((tmp_row - 1) * total_col + tmp_col);
+                        }
+
+                        if ((tmp_row + 1 < total_row) && (grid[tmp_row + 1][tmp_col] == '1')) {
+                            grid[tmp_row + 1][tmp_col] = '0';
+                            queue.add((tmp_row + 1) * total_col + tmp_col);
+                        }
+
+                        if ((tmp_col - 1 >= 0) && (grid[tmp_row][tmp_col - 1] == '1')) {
+                            grid[tmp_row][tmp_col + 1] = '0';
+                            queue.add(tmp_row * total_col + (tmp_col - 1));
+                        }
+
+                        if ((tmp_col + 1 < total_col) && (grid[tmp_row][tmp_col + 1] == '1')) {
+                            grid[tmp_row][tmp_col + 1] = '0';
+                            queue.add(tmp_row * total_col + (tmp_col + 1));
+                        } 
+                    }
+                }
+            }
+        }
+        return num_island;
+    }
+}

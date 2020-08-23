@@ -1,0 +1,110 @@
+解法1 : 
+
+class Solution {
+    int[] dirX = {0, 1, 0, -1, 1, 1, -1, -1};
+    int[] dirY = {1, 0, -1, 0, 1, -1, 1, -1};
+
+    public char[][] updateBoard(char[][] board, int[] click) {
+        int x = click[0], y = click[1];
+        if (board[x][y] == 'M') {
+            board[x][y] = 'X';
+        } else {
+            dfs(board, x, y);
+        }
+
+        return board;
+    }
+
+    private void dfs(char[][] board, int x, int y) {
+        int cnt = 0;
+        for (int i = 0; i < 8; i++) {
+            int tx = x + dirX[i];
+            int ty = y + dirY[i];
+            if (tx < 0 || ty < 0 || tx >= board.length || ty >= board[0].length) 
+                continue;
+            
+            if (board[tx][ty] == 'M') {
+                cnt++;
+            } 
+        }
+        if (cnt > 0) {
+            board[x][y] = (char)(cnt + '0');
+        } else {
+            board[x][y] = 'B';
+            for (int i = 0; i < 8; i++) {
+                int tx = x + dirX[i];
+                int ty = y + dirY[i];
+                if (tx < 0 || ty < 0 || tx >= board.length || ty >= board[0].length || board[tx][ty] != 'E') 
+                    continue;
+
+                dfs(board, tx, ty);
+            }
+        }
+        
+    }
+}
+
+解法2: 
+
+class Solution {
+    int[] dirX = {0, 1, 0, -1, 1, 1, -1, -1};
+    int[] dirY = {1, 0, -1, 0, 1, -1, 1, -1};
+
+    public char[][] updateBoard(char[][] board, int[] click) {
+       int x = click[0], y = click[1];
+       if (board[x][y] == 'M') {
+           board[x][y] = 'X';
+       } else {
+           bfs(board, x, y);
+       }
+
+       return board;
+    }
+
+   private void bfs(char[][] board, int x, int y) {
+       Queue<int[]> queue = new LinkedList<int[]>();
+       boolean[][] visited = new boolean[board.length][board[0].length];
+       queue.offer(new int[]{x, y});
+       visited[x][y] = true;
+
+       int sx = 0, sy = 0;
+       int cnt = 0;
+       while (!queue.isEmpty()) {
+           cnt = 0;
+           int[] position = queue.poll();
+           sx = position[0];
+           sy = position[1];
+
+            for (int i = 0; i < 8; i++) {
+                int tx = sx + dirX[i];
+                int ty = sy + dirY[i];
+
+                if (tx < 0 || ty < 0 || tx >= board.length || ty >= board[0].length) {
+                    continue;
+                }
+
+                if (board[tx][ty] == 'M') {
+                    cnt++;
+                }
+               
+           }
+
+           if (cnt > 0) {
+               board[sx][sy] = (char)(cnt + '0');
+           } else {
+                board[sx][sy] = 'B';
+               for (int i = 0; i < 8; i++) {
+                   int tx = sx + dirX[i];
+                   int ty = sy + dirY[i];
+
+                   if (tx < 0 || ty < 0 || tx >= board.length || ty >= board[0].length || visited[tx][ty] == true) {
+                       continue;
+                   }
+                    queue.offer(new int[] { tx, ty });
+                    visited[tx][ty] = true;
+               }
+           }
+       }
+
+   }
+}
