@@ -1,0 +1,26 @@
+½â´ð1:
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> answers = new ArrayList<String>();
+        dfs(answers, 0, 0, n, "");
+        return answers;
+    }
+
+    private void dfs(List<String> ans, int left, int right, int n, String str) {
+        if (left == n && right == n) {
+            ans.add(str);
+            return;
+        }
+
+        if (left < n) {
+            dfs(ans, left + 1, right, n, str + "(");
+        }
+        if (right < left) {
+            dfs(ans, left, right + 1, n, str + ")");
+        }
+    }
+}
+
+½â´ð2:
+
