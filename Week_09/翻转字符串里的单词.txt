@@ -1,0 +1,10 @@
+½â·¨1 :
+
+class Solution {
+    public String reverseWords(String s) {
+        s = s.trim();
+        List<String> result_array = Arrays.asList(s.split("\\s+"));
+        Collections.reverse(result_array);
+        return String.join(" ", result_array);
+    }
+}
